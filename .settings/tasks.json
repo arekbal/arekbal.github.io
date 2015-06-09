@@ -1,0 +1,80 @@
+//{
+//    "version": "0.1.0",
+//
+//    // The command is tsc.
+//    "command": "tsc",
+//
+//    // Show the output window only if unrecognized errors occur. 
+//    "showOutput": "silent",
+//
+//    // Under windows use tsc.exe. This ensures we don't need a shell.
+//    "windows": {
+//        "command": "tsc.exe"
+//    },
+//    
+//    "isShellCommand": true,
+//
+//    // args is the HelloWorld program to compile.
+//    "args": ["${file}"],
+//
+//    // use the standard tsc problem matcher to find compile problems
+//    // in the output.
+//    "problemMatcher": "$tsc"
+//}
+
+
+{
+    "version": "0.1.0",
+    "command": "gulp",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "args": [
+        "--no-color"
+    ],
+    "tasks": [      
+      {
+        "taskName": "default",
+        "isWatching": false,
+        "isBuildCommand": true,        
+        "showOutput": "always"        
+      },
+      {
+        "taskName": "ts-server",
+        "isWatching": false,        
+        "isBuildCommand": true,
+        "showOutput": "always",        
+        "problemMatcher": "$tsc"
+//        {          
+//          "owner": "$tsc",
+//          "base": "$tsc",
+//          "fileLocation": ["relative", "${workspaceRoot}"],
+//          "pattern": {          
+//              "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(.*)$",
+//              "file": 1,
+//              "line": 2,
+//              "column": 3,
+//              //"severity": 4,
+//              "message": 4
+//          }
+//        }
+      },
+      {
+        "taskName": "ts-client",
+        "isWatching": false,        
+        "isBuildCommand": true,
+        "showOutput": "always",
+        "problemMatcher": {
+          "owner": "tsc",
+          "fileLocation": ["relative", "${workspaceRoot}"],
+          "pattern": {          
+              "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(.*)$",
+              "file": 1,
+              "line": 2,
+              "column": 3,
+              //"severity": 4,
+              "message": 4
+          }
+        }
+      }
+    ]
+}
