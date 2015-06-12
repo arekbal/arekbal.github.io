@@ -24,15 +24,15 @@ gulp.task('clean', function () {
 var tsServerOpts = { target:'ES5', module:'commonjs', typescript: require('typescript') }
 var tsClientOpts = { target:'ES5', out: "_app.js", typescript: require('typescript') }
 
-gulp.task('ts-server', function () {
-   var tsResult =  gulp.src('./server/**/*.ts')
-        .on('error', gutil.log)
-        .pipe(sourcemaps.init())
-        .pipe(ts(tsServerOpts))
-  return tsResult.js
-        .pipe(sourcemaps.write('/'))
-        .pipe(gulp.dest('./build/server'))
-})
+// gulp.task('ts-server', function () {
+//    var tsResult =  gulp.src('./server/**/*.ts')
+//         .on('error', gutil.log)
+//         .pipe(sourcemaps.init())
+//         .pipe(ts(tsServerOpts))
+//   return tsResult.js
+//         .pipe(sourcemaps.write('/'))
+//         .pipe(gulp.dest('./build/server'))
+// })
 
 gulp.task('ts-client', function () {
   var tsResult =  gulp.src('./client/**/*.ts')
@@ -66,8 +66,7 @@ gulp.task('css', function () {
           paths: [path.join(__dirname, 'less', 'includes')]
         }))
         .pipe(gulp.dest('./build/css'))
-        .pipe(gulp.dest('./public/styles'))
-        
+        .pipe(gulp.dest('./public/styles'))        
 })
 
 gulp.task('watch', function() {
