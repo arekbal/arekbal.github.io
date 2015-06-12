@@ -2,4 +2,4 @@
 
 ## Demo website - personal playground - work in progress...
 
-[arekbal.github.io](arekbal.github.i)
+[arekbal.github.io](http://arekbal.github.io)
