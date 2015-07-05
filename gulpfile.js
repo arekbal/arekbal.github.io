@@ -57,7 +57,7 @@ function task_clean() {
 function task_jade() {
   gutil.log(arguments.callee.name)
   return gulp.src(['./client/templates/**/*.jade', '!./client/templates/index.jade', '!./client/templates/**/*.tmpl.jade'])
-    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+    .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(fileInclude())
     .pipe(changed('./build/client/templates'))
     .pipe(jade(
@@ -72,7 +72,7 @@ function task_jade() {
 function task_jadeIndex() {
   gutil.log(arguments.callee.name)
   return gulp.src('./client/templates/index.jade')
-    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+    .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(fileInclude())
     .pipe(jade(
     {
@@ -99,7 +99,7 @@ var tsClientOpts = { target:'ES5', out: "app.js", typescript: require('typescrip
 function task_ts(){
   gutil.log(arguments.callee.name)
   var tsResult =  gulp.src('./client/**/*.ts')
-    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+    .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(changed('./build/client'))
     .on('error', gutil.log)
     .pipe(sourcemaps.init())
@@ -114,7 +114,7 @@ function task_js(){
   gutil.log(arguments.callee.name)
   return gulp.src('./build/client/**/*.js')
     .on('error', gutil.log)
-    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+    .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./build/client'))
     .pipe(filesize())
@@ -127,7 +127,7 @@ function task_js(){
 function task_sass() {
   gutil.log(arguments.callee.name)
   return gulp.src('./client/styles/**/*.sass')
-    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+    .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(sourcemaps.write('.'))
