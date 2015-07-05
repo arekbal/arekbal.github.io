@@ -16,7 +16,9 @@ var plumber = require('gulp-plumber')
 var ts = require('gulp-typescript')
 var sourcemaps = require('gulp-sourcemaps')
 var jade = require('gulp-jade')
-var merge = require('event-stream').merge;
+var merge = require('event-stream').merge
+
+var fileInclude = require('gulp-file-include')
 
 var is_debug = true
 
@@ -28,8 +30,9 @@ function task_clean() {
 
 function task_jade() {
   gutil.log(arguments.callee.name)
-  return gulp.src(['./client/templates/**/*.jade', '!./client/templates/index.jade'])
+  return gulp.src(['./client/templates/**/*.jade', '!./client/templates/index.jade', '!./client/templates/**/*.tmpl.jade'])
     .pipe(plumber())
+    .pipe(fileInclude())
     .pipe(changed('./build/client/templates'))
     .pipe(jade(
     {
@@ -44,6 +47,7 @@ function task_jadeIndex() {
   gutil.log(arguments.callee.name)
   return gulp.src('./client/templates/index.jade')
     .pipe(plumber())
+    .pipe(fileInclude())
     .pipe(jade(
     {
       locals: 
