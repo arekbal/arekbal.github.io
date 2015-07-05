@@ -16,11 +16,37 @@ var plumber = require('gulp-plumber')
 var ts = require('gulp-typescript')
 var sourcemaps = require('gulp-sourcemaps')
 var jade = require('gulp-jade')
+var fileInclude = require('gulp-file-include')
 var merge = require('event-stream').merge
 
-var fileInclude = require('gulp-file-include')
 
 var is_debug = true
+var is_win8_notifier = true
+
+
+var notifier = null
+
+if(is_win8_notifier)
+{
+var WindowsToaster = require('node-notifier').WindowsToaster;
+notifier = new WindowsToaster({
+  withFallback: true, // Fallback to Growl or Balloons?
+  customPath: void 0 // Relative path if you want to use your fork of toast.exe
+})
+}
+else
+{
+var Growl = require('node-notifier').Growl;
+notifier = new Growl({
+  name: 'Growl Name Used', // Defaults as 'Node'
+  host: 'localhost',
+  port: 23053
+})
+}
+
+var notify = require('gulp-notify').withReporter(notifier.notify.bind(notifier))
+
+
 
 function task_clean() {
   gutil.log(arguments.callee.name)
@@ -31,7 +57,7 @@ function task_clean() {
 function task_jade() {
   gutil.log(arguments.callee.name)
   return gulp.src(['./client/templates/**/*.jade', '!./client/templates/index.jade', '!./client/templates/**/*.tmpl.jade'])
-    .pipe(plumber())
+    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
     .pipe(fileInclude())
     .pipe(changed('./build/client/templates'))
     .pipe(jade(
@@ -46,7 +72,7 @@ function task_jade() {
 function task_jadeIndex() {
   gutil.log(arguments.callee.name)
   return gulp.src('./client/templates/index.jade')
-    .pipe(plumber())
+    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
     .pipe(fileInclude())
     .pipe(jade(
     {
@@ -73,7 +99,7 @@ var tsClientOpts = { target:'ES5', out: "app.js", typescript: require('typescrip
 function task_ts(){
   gutil.log(arguments.callee.name)
   var tsResult =  gulp.src('./client/**/*.ts')
-    .pipe(plumber())
+    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
     .pipe(changed('./build/client'))
     .on('error', gutil.log)
     .pipe(sourcemaps.init())
@@ -88,7 +114,7 @@ function task_js(){
   gutil.log(arguments.callee.name)
   return gulp.src('./build/client/**/*.js')
     .on('error', gutil.log)
-    .pipe(plumber())
+    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
     .pipe(concat('app.js'))
     .pipe(gulp.dest('./build/client'))
     .pipe(filesize())
@@ -101,7 +127,7 @@ function task_js(){
 function task_sass() {
   gutil.log(arguments.callee.name)
   return gulp.src('./client/styles/**/*.sass')
-    .pipe(plumber())
+    .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
     .pipe(sourcemaps.init())
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(sourcemaps.write('.'))
@@ -121,6 +147,8 @@ function task_watch()
 
 function task_build()
 {
+  notify({ message: 'Click or wait', wait: true })
+  
   gutil.log(arguments.callee.name)
   
   return merge(task_jade(), task_jadeIndex(), task_ts().on('finish', task_js), task_sass())
