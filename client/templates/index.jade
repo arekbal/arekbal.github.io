@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    if debug 
+      meta(http-equiv='refresh', content='3')
+    
+    title='Arek Bal demo page...'
+    each path in styles
+      style(type='text/css', src=path)
+  body
+  
+    h1 Arek Bal Demo Page
+    
+    #container.col
+      p.
+        testing jade
+        here + knockout punches then
+    {{name}}
+    each path in scripts
+      script(type='text/javascript', src=path)

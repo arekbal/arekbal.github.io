@@ -1,3 +1,5 @@
+/// <reference path="../../typings/knockout/knockout.d.ts"/>
+
 module my
 {
 	export class Anulus
@@ -25,4 +27,9 @@ function doc(b:string, c:string)
 	  return descriptor;
 	}
 }
+
+(<any>ko).punches.enableAll()
+
+ko.applyBindings({ name:'testing punches' })
+
 
