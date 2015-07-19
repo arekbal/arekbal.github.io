@@ -1,21 +1,12 @@
 doctype html
 html
   head
-    if debug 
+    if autorefresh 
       meta(http-equiv='refresh', content='3')
     
     title='Arek Bal demo page...'
     each path in styles
-      style(type='text/css', src=path)
+      link(type='text/css', rel='stylesheet', href=path)
   body
-  
-    :markdown
-      # Markdown
-    @@include('my.tmpl.jade')
-    #container.col
-      p.
-        testing jade
-        here + knockout punches then
-    {{name}}
     each path in scripts
       script(type='text/javascript', src=path)

@@ -21,8 +21,8 @@ var merge = require('event-stream').merge
 
 
 var is_debug = true
+var is_autorefresh = false
 var is_win8_notifier = true
-
 
 var notifier = null
 
@@ -46,12 +46,11 @@ notifier = new Growl({
 
 var notify = require('gulp-notify').withReporter(notifier.notify.bind(notifier))
 
-
-
 function task_clean() {
   gutil.log(arguments.callee.name)
   return gulp.src('build', { read: false })
     .pipe(clean())
+    .pipe(notify({title: "SUCCESS", message: arguments.callee.name}))
 }
 
 function task_jade() {
@@ -63,10 +62,11 @@ function task_jade() {
     .pipe(jade(
     {
       locals: { 
-        debug: is_debug,      
+        debug: is_debug,    
       }
     }))
     .pipe(gulp.dest('./build/client/templates'))
+    .pipe(notify({title: "SUCCESS", message: arguments.callee.name}))
 }
 
 function task_jadeIndex() {
@@ -78,6 +78,7 @@ function task_jadeIndex() {
     {
       locals: 
       {
+        autorefresh : is_autorefresh,
         debug: is_debug,
         styles: [
           'build/client/styles/site.css'
@@ -85,12 +86,14 @@ function task_jadeIndex() {
         scripts: [
           'http://knockoutjs.com/downloads/knockout-3.3.0.js',
           'http://mbest.github.io/knockout.punches/knockout.punches.min.js', // bites with mustache
-          'build/client/app.js'
+          'https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.js',
+          'build/client/app.min.js',
         ]
       }
     }))
     .pipe(gulp.dest('./build/client/templates'))
     .pipe(gulp.dest('.'))
+    .pipe(notify({title: "SUCCESS", message: arguments.callee.name}))
 }
 
 var tsServerOpts = { target:'ES5', module:'commonjs', typescript: require('typescript') }
@@ -102,26 +105,33 @@ function task_ts(){
     .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(changed('./build/client'))
     .on('error', gutil.log)
-    .pipe(sourcemaps.init())
+    //.pipe(sourcemaps.init())
     .pipe(ts(tsClientOpts))
   return tsResult.js
     .pipe(plumber())
-    .pipe(sourcemaps.write('.'))
+    //.pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./build/client'))
+    .pipe(notify({title: "SUCCESS", message: arguments.callee.name}))
 }
 
+
+//TODO: replan this so I could have clean before I recreate files... otherwise some errors
 function task_js(){
   gutil.log(arguments.callee.name)
-  return gulp.src('./build/client/**/*.js')
+  var result = gulp.src(['./client/**/*.js', './build/client/**/*.js'])
     .on('error', gutil.log)
     .pipe(plumber({errorHandler: notify.onError("<%=error.message%>")}))
     .pipe(concat('app.js'))
-    .pipe(gulp.dest('./build/client'))
-    .pipe(filesize())
-    .pipe(uglify())
+    .pipe(gulp.dest('./build/client'))   
+    
+    if(is_debug == false)    
+      result = result.pipe(filesize()).pipe(uglify())
+    
+  return result
     .pipe(rename('app.min.js'))
     .pipe(filesize())        
     .pipe(gulp.dest('./build/client'))
+    .pipe(notify({title: "SUCCESS", message: arguments.callee.name}))
 }
 
 function task_sass() {
@@ -132,6 +142,7 @@ function task_sass() {
     .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./build/client/styles'))
+    .pipe(notify({title: "SUCCESS", message: arguments.callee.name}))
 }
 
 function task_watch()
@@ -147,11 +158,21 @@ function task_watch()
 
 function task_build()
 {
-  notify({ message: 'Click or wait', wait: true })
-  
   gutil.log(arguments.callee.name)
   
-  return merge(task_jade(), task_jadeIndex(), task_ts().on('finish', task_js), task_sass())
+  return merge(task_jade(), task_jadeIndex(), task_ts().on('finish', function () { task_js().on('finish', task_success) }), task_sass())
+}
+
+function task_success()
+{
+  gutil.log(arguments.callee.name)
+  
+  notifier.notify({
+  'title': 'task_success',
+  'message': 'SUCCESS',
+  })
+  
+  gutil.log("SUCCESS")
 }
 
 function task_deploy()
@@ -178,6 +199,8 @@ gulp.task('jade-index', task_jadeIndex)
 gulp.task('watch', task_watch)
 
 gulp.task('build', task_build)
+
+gulp.task('success', task_success)
    
 gulp.task('clean-build', ['clean'], task_build)
 
