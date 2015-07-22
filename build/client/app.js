@@ -307,8 +307,12 @@ var my;
             this.matWires = new THREE.MeshBasicMaterial({ wireframe: true });
             this.matColor = new THREE.MeshBasicMaterial({ color: 0x335588 });
             this.matRedColor = new THREE.MeshBasicMaterial({ color: 0x770000 });
+            this.matGreenColor = new THREE.MeshBasicMaterial({ color: 0x33AA22 });
+            this.matPhong = new THREE.MeshPhongMaterial({});
             this.geoPlane = new THREE.PlaneBufferGeometry(100, 100);
             this.meshPlane = new THREE.Mesh(this.geoPlane, this.matRedColor);
+            this.geoBox = new THREE.BoxGeometry(70, 56, 94);
+            this.meshBox = new THREE.Mesh(this.geoBox, this.matPhong);
         }
         Game.prototype.init = function () {
             this.scene = new THREE.Scene();
@@ -316,10 +320,16 @@ var my;
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             this.camera.position.z = 300;
             this.scene.add(this.camera);
+            this.light = new THREE.PointLight(0xffffff, 1, 100);
+            this.light.position.set(15, 50, 37);
+            this.scene.add(this.light);
             this.scene.add(this.meshPlane);
+            this.scene.add(this.meshBox);
         };
         Game.prototype.update = function () {
-            this.meshPlane.rotateZ(0.2);
+            this.meshBox.rotateX(0.02);
+            this.meshBox.rotateY(0.031);
+            this.meshPlane.rotateZ(0.04);
             this.meshPlane.position.x += 0.2;
             //var a = new THREE.Euler( 0, 1, 1.57, 'XYZ' );
             //this.meshPlane.applyMatrix()
