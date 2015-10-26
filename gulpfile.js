@@ -149,7 +149,7 @@ function task_watch()
 {
   gutil.log(arguments.callee.name)
   
-  gulp.watch('./client/**/*.ts', ['js'])
+  gulp.watch('./client/**/*.ts', [  'js'])
   gulp.watch('./client/templates/**/*.jade', ['jade-index'])
   gulp.watch(['./client/templates/**/*.jade', '!./client/templates/index.jade'], ['jade'])
   gulp.watch('./client/styles/**/*.sass', ['sass'])
@@ -188,7 +188,7 @@ gulp.task('clean', task_clean)
 
 gulp.task('sass', task_sass)
 
-gulp.task('ts', task_ts)
+gulp.task('ts', ['clean'], task_ts)
 
 gulp.task('js', ['ts'], task_js)
 

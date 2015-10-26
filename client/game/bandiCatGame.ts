@@ -1,61 +1,25 @@
-/// <reference path="../../typings/knockout/knockout.d.ts"/>
 /// <reference path="../../typings/threejs/three.d.ts"/>
+
+/// <reference path="../domix/interactive/model.ts" />
+/// <reference path="../domix/interactive/app.ts" />
+
 
 declare var screenfull:any
 
-module my
+module game
 {
-	export class BaseGame
+	class Meshes
 	{
-		private _renderer = new THREE.WebGLRenderer()
-		
-		get renderer() : THREE.WebGLRenderer
-		{
-			return this._renderer		
-		}
-		
-		get domElement() : HTMLCanvasElement
-		{
-			return this._renderer.domElement
-		}
-				
-		protected init()
-		{			
-		}	
-		
-		protected update()
-		{		
-		}	
-				
-		protected draw()
-		{			
-		}
-		
-		private lastAnimationFrame = 0
-				
-		start()
+		private static matPhong = new THREE.MeshPhongMaterial({ color: 0xccddbb })
+		static getHero() : THREE.Mesh
 		{	
-			this._renderer.setClearColor(0x446688)
+			var geoBox = new THREE.BoxGeometry(70, 56, 94)
 			
-			this.init()
-			
-			this.lastAnimationFrame = requestAnimationFrame(this.render.bind(this))
-		}
-		
-		stop()
-		{
-			cancelAnimationFrame(this.lastAnimationFrame)
-		}
-
-		private render()
-		{			
-			this.update()
-			this.draw()
-			this.lastAnimationFrame = requestAnimationFrame(this.render.bind(this))
+			return new THREE.Mesh(geoBox, Meshes.matPhong)
 		}
 	}
 	
-	export class Game extends BaseGame
+  export class BandiCatGame extends domix.interactive.App
 	{			
 		scene: THREE.Scene
 		camera: THREE.Camera
@@ -67,15 +31,15 @@ module my
 				
 		matGreenColor = new THREE.MeshBasicMaterial({color: 0x33AA22})
 		
-		matPhong = new THREE.MeshPhongMaterial({ })
-		
 		geoPlane = new THREE.PlaneBufferGeometry(100, 100)		
 		meshPlane = new THREE.Mesh(this.geoPlane, this.matRedColor)
 		
-		geoBox = new THREE.BoxGeometry(70, 56, 94)
-		meshBox = new THREE.Mesh(this.geoBox, this.matPhong)
+		//geoBox = new THREE.BoxGeometry(70, 56, 94)
+		//meshBox = new THREE.Mesh(this.geoBox, this.matPhong)
 		
 		light: THREE.PointLight
+		
+		meshHero = Meshes.getHero()
 
 		init()
 		{
@@ -84,21 +48,21 @@ module my
 			
 			this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 			this.camera.position.z = 300					
-			this.scene.add(this.camera)	
+			this.scene.add(this.camera)
 			
-			this.light = new THREE.PointLight( 0xffffff, 1, 100 );	
-			this.light.position.set( 15, 50, 37 );
-			this.scene.add(this.light);
+			this.light = new THREE.PointLight( 0xffffff, 1, 100 )	
+			this.light.position.set( 15, 50, 37 )
+			this.scene.add(this.light)
 			
 			this.scene.add(this.meshPlane)
 			
-			this.scene.add(this.meshBox)
+			this.scene.add(this.meshHero)
 		}
 		
 		update()
 		{
-			this.meshBox.rotateX(0.02)
-			this.meshBox.rotateY(0.031)
+			this.meshHero.rotateX(0.02)
+			this.meshHero.rotateY(0.031)
 			this.meshPlane.rotateZ(0.04)
 			this.meshPlane.position.x += 0.2
 			
@@ -113,20 +77,18 @@ module my
 		  this.renderer.render(this.scene, this.camera)
 		}
 	}
-}
-
 //(<any>ko).punches.enableAll()
 
 //ko.applyBindings({ name:'testing punches' })
 
 window.onload = function()
 {
-	var game = new my.Game()
+	var g = new game.BandiCatGame()
 	
 	//document.body.innerHTML = ""
-	document.body.appendChild(game.domElement)
+	document.body.appendChild(g.domElement)
 	
-	game.start()	
+	g.start()
 	
 //	renderer.domElement.addEventListener(('click'), ()=> 
 //		screenfull.request( renderer.domElement))
@@ -158,3 +120,5 @@ window.onload = function()
 
 
 
+
+}
