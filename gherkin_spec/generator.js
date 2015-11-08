@@ -1,18 +1,29 @@
 var parser = new Gherkin.Parser;
 parser.stopAtFirstError = false;
 
+ko.punches.enableAll();
+
 var that = 
 {
-  namespaceName: ko.observable(""),
+  filePath: ko.observable("FILE_PATH"),
+  namespaceName: ko.observable("NAMESPACE"),
   inputText: ko.observable(""),
   mode: ko.observable("MsTest"),
+  modes: ko.observableArray(["MsTest"/*, "NUnit", "xUnit"*/]),
   errorText: ko.observable(""),
-  usings: ko.observableArray()
+  ast: ko.observable(),
+  usings: ko.observableArray(),
+  useSeparateScenarioNames : ko.observable(false),
+  baseClass: ko.observable("GherkinSpecBase"),
+  useKeywords: ko.observable(true),
+  knownKeywords: ko.observable("Given, And, But, When, Then"),
+  knownKeywordsArray : ko.pureComputed(function(){ return that.knownKeywords().split(' ').join('').split(',') }),
+  allScenariosCoveredTest : ko.observable(true)
 }
 
 that.inputText.extend({ rateLimit: 400 }).subscribe(function(v) 
 {
-  that.errorText(parse(that.inputText()))
+  parse(that.inputText())
 })
 
 that.mode.subscribe(function(v)
@@ -28,8 +39,10 @@ function setMode()
   ]
  
   if(that.mode() == "MsTest")
+  {
     usings.push("GherkinSpec.MsTest")
     usings.push("Microsoft.VisualStudio.TestTools.UnitTesting")
+  }
     
   that.usings(usings)
 }
@@ -38,50 +51,16 @@ setMode()
 
 ko.applyBindings(that)
 
-function generate_code(ast)
+function parse(inputText) 
 {
-  var result = JSON.stringify(ast, null, 2);
+  that.ast(null)
+  that.errorText("")
   
-  var usings = 
-  [
-    "GherkinSpec.Core",
-  ]
- 
-  if(mode.value == "MsTest")
-    usings.push("GherkinSpec.MsTest")
-    usings.push("Microsoft.VisualStudio.TestTools.UnitTesting")
-        
-  var usingsText = usings.reduce(function(prev, curr, index, arr) { return prev + "using " + curr + ";\n" }, "")
-     
-  var namespaceBeginText = "namespace @{NAMESPACE}\n" + 
-    "{\n"
-    
-  var namespaceEndText = "}"
-  
-  var classAttributesText = "[Feature(FilePath=\"Hahhah\")]"
-  var classBeginText = classAttributesText + "\n" + 
-    "class @{CLASS_NAME}\n" + 
-    "{\n"
-    
-  var classEndText = "}\n"
-
-  return usingsText + namespaceBeginText +  + namespaceEndText
-}
-
-function parse(inputText) {  
   try {
-    var ast = parser.parse(inputText);
-    return generate_code(ast)
+    that.ast(parser.parse(inputText));
   } catch (e) {
-    return e.message;
+    that.errorText(e.message);
   }
 }
-
-var timeoutHandle = 0
-
-input.onkeyup = function () {
-  clearTimeout(timeoutHandle)
-  timeoutHandle = setTimeout(parse, 250)
-};
 
 parse();

@@ -6,18 +6,76 @@
   </head>
 
   <body>
+    Version 1.4.0.0 required
+    <br>    
     Namespace: <input id=ns type=text data-bind="textInput: namespaceName"></input>
     <br>
-    Mode: <input id=mode name=MsTest value=MsTest type=radio checked><label>MsTest</label></input>
+    Feature FilePath: <input id=ns type=text data-bind="textInput: filePath"></input>
     <br>
-    <textarea id=input cols=120 rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>
+    Mode:
+    <!--ko foreach: modes-->
+      <label><input type="radio" name="mode" data-bind="attr:{ value: $data }, checked: $parent.mode" />{{$data}}</label>   
+    <!--/ko-->
     <br>
-    <pre id=output>
-      
-    </pre>   
-    <pre data-bind="text: errorText"></pre>         
-    <script src="https://raw.githubusercontent.com/cucumber/gherkin3/master/javascript/dist/gherkin.min.js"></script>
-    <script src="http://knockoutjs.com/downloads/knockout-3.4.0rc.js"></script>
+    Base Class: <input id=ns type=text data-bind="textInput: baseClass"></input>
+    <br>
+    Use keywords: <input type="checkbox" data-bind="checked: useKeywords" /> 
+    <br>
+    Known keywords: <input type="text" data-bind="textInput: knownKeywords" />
+    <br>
+    Separate scenario names: <input type="checkbox" data-bind="checked: useSeparateScenarioNames"></input>
+    <br>
+    "All scenarios covered" test: <input type="checkbox" data-bind="checked: allScenariosCoveredTest"></input>
+    <br>
+    
+    <textarea id=input style="float:left;width:40%;height:500px" rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>    
+        
+    <pre style="width:40%; height:500px; max-height:500px; overflow: auto">
+    {{#foreach: usings}}using {{$data}};
+    {{/foreach}}
+    namespace {{namespaceName}}
+    {
+        <!--ko with:ast-->[Feature(FilePath="{{$parent.filePath}}"){{#if $root.mode()=="MsTest"}} TestClass{{/if}}]
+        public class {{name.split(' ').join('_')}} : {{$root.baseClass}}
+        {
+            {{#if background}}protected override void Background()
+            {
+                {{#foreach: background.steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text}}");
+                                
+                {{/foreach}}  
+            }
+            {{/if}}
+            {{#foreach: scenarioDefinitions}}[Scenario{{#if: $root.useSeparateScenarioNames}}("{{name}}"){{/if}}{{#if $root.mode()=="MsTest"}} TestMethod{{/if}}]
+            public void {{name.split(' ').join('_')}}()
+            {
+                {{#if type=='ScenarioOutline'}}foreach (var exampleSet in ExampleSets)
+                    foreach (var example in exampleSet)
+                    {
+                        {{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}($"{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step($"{{keyword}}{{/ifnot}}{{text.split('<').join('{example["').split('>').join('"]}')}}");                
+                        
+                        {{/foreach}}
+                    }{{/if}}
+                {{#ifnot type=='ScenarioOutline'}}{{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text}}");
+                {{#if argument}}{
+                    {{#if argument.rows[0].cells.length == 1}}var arguments = ArgumentList{{/if}}{{#ifnot argument.rows[0].cells.length == 1}}var arguments = ArgumentTable{{/ifnot}};
+                }{{/if}}          
+                {{/foreach}}{{/ifnot}}  
+            }
+                            
+            {{/foreach}}{{#if $root.allScenariosCoveredTest}}{{#if $root.mode()=="MsTest"}}[TestMethod]
+            {{/if}}public void All_scenarios_covered()
+            {
+                {{#if $root.mode()=="MsTest"}}Assert.IsTrue(AllScenariosCovered);{{/if}}
+            }{{/if}}
+        }<!--/ko-->
+    }
+    </pre>
+    
+    <pre data-bind="text: errorText"></pre>
+           
+    <script src="gherkin.min.js"></script>
+    <script src="knockout-3.4.0rc.js"></script>
+    <script src="knockout.punches.min.js"></script>
     <script src="generator.js"></script>
   </body>
 </html>
