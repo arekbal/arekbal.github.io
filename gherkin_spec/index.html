@@ -48,7 +48,7 @@
         {
             {{#if background}}protected override void Background()
             {
-                {{#foreach: background.steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text}}");
+                {{#foreach: background.steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
                                 
                 {{/foreach}}  
             }
@@ -59,11 +59,11 @@
                 {{#if type=='ScenarioOutline'}}foreach (var exampleSet in ExampleSets)
                     foreach (var example in exampleSet)
                     {
-                        {{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}($"{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step($"{{keyword}}{{/ifnot}}{{text.split('<').join('{example["').split('>').join('"]}')}}");                
+                        {{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}($"{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step($"{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"').split('<').join('{example["').split('>').join('"]}')}}");                
                         
                         {{/foreach}}
                     }{{/if}}
-                {{#ifnot type=='ScenarioOutline'}}{{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text}}");
+                {{#ifnot type=='ScenarioOutline'}}{{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
                 {{#if argument}}{
                     {{#if argument.rows[0].cells.length == 1}}var arguments = ArgumentList{{/if}}{{#ifnot argument.rows[0].cells.length == 1}}var arguments = ArgumentTable{{/ifnot}};
                 }{{/if}}          
