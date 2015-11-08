@@ -6,11 +6,11 @@
   </head>
 
   <body>
-    Version 1.4.0.0 required
+    Required: GherkinSpec v1.4.0.0 and C# 6 compiler(for interpolated strings in Scenario Outlines)
     <br>    
     Namespace: <input id=ns type=text data-bind="textInput: namespaceName"></input>
     <br>
-    Feature FilePath: <input id=ns type=text data-bind="textInput: filePath"></input>
+    FilePath: <input id=ns type=text data-bind="textInput: filePath"></input> or FileAddress: <input id=ns type=text data-bind="textInput: fileAddress"></input> or Loader: <input id=ns type=text data-bind="textInput: loader"></input> with LoaderParam: <input id=ns type=text data-bind="textInput: loaderParam"></input>
     <br>
     Mode:
     <!--ko foreach: modes-->
@@ -25,9 +25,10 @@
     <br>
     Separate scenario names: <input type="checkbox" data-bind="checked: useSeparateScenarioNames"></input>
     <br>
-    "All scenarios covered" test: <input type="checkbox" data-bind="checked: allScenariosCoveredTest"></input>
+    "All scenarios covered" test(at the end): <input type="checkbox" data-bind="checked: allScenariosCoveredTest"></input>
     <br>
-    
+    <input type="button" value="Load Example" data-bind="click: loadExample">
+    <br>
     <textarea id=input style="float:left;width:40%;height:500px" rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>    
         
     <pre style="width:40%; height:500px; max-height:500px; overflow: auto">
@@ -35,7 +36,7 @@
     {{/foreach}}
     namespace {{namespaceName}}
     {
-        <!--ko with:ast-->[Feature(FilePath="{{$parent.filePath}}"){{#if $root.mode()=="MsTest"}} TestClass{{/if}}]
+        <!--ko with:ast-->[Feature({{$root.loaderText}}){{#if $root.mode()=="MsTest"}} TestClass{{/if}}]
         public class {{name.split(' ').join('_')}} : {{$root.baseClass}}
         {
             {{#if background}}protected override void Background()
