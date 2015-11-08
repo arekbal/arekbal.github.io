@@ -2,18 +2,22 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8"> 
+    <meta charset=UTF-8> 
   </head>
 
   <body>
-    Namespace: <input id="ns" type=text value="Namespace"></input>
+    Namespace: <input id=ns type=text data-bind="textInput: namespaceName"></input>
     <br>
-    Mode: <input id="mode" name="MsTest" value="MsTest" type=radio checked><label>MsTest</label></input>
+    Mode: <input id=mode name=MsTest value=MsTest type=radio checked><label>MsTest</label></input>
     <br>
-    <textarea id="input" cols=120 rows=30>Feature: Hello</textarea>
+    <textarea id=input cols=120 rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>
     <br>
-    <pre id="output"></pre>
+    <pre id=output>
+      
+    </pre>   
+    <pre data-bind="text: errorText"></pre>         
     <script src="https://raw.githubusercontent.com/cucumber/gherkin3/master/javascript/dist/gherkin.min.js"></script>
-    <script src="gherkin_spec_generator.js"></script>
+    <script src="http://knockoutjs.com/downloads/knockout-3.4.0rc.js"></script>
+    <script src="generator.js"></script>
   </body>
 </html>
