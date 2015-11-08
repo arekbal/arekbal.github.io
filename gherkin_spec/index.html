@@ -39,44 +39,43 @@
     <textarea id=input style="float:left;width:47%;height:500px" rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>    
     <textarea class="js-copy-pre-target" style="display:none" ></textarea>
     <pre class="js-copy-pre" style="width:47%; height:500px; max-height:500px; overflow: auto">
-    {{#foreach: usings}}using {{$data}};
-    {{/foreach}}
-    namespace {{namespaceName}}
+{{#foreach: usings}}using {{$data}};
+{{/foreach}}
+namespace {{namespaceName}}
+{
+    <!--ko with:ast-->[Feature({{$root.loaderText}}){{#if $root.mode()=="MsTest"}} TestClass{{/if}}]
+    public class {{name.split(' ').join('_')}} : {{$root.baseClass}}
     {
-        <!--ko with:ast-->[Feature({{$root.loaderText}}){{#if $root.mode()=="MsTest"}} TestClass{{/if}}]
-        public class {{name.split(' ').join('_')}} : {{$root.baseClass}}
+        {{#if background}}protected override void Background()
         {
-            {{#if background}}protected override void Background()
-            {
-                {{#foreach: background.steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
-                                
-                {{/foreach}}  
-            }
-            {{/if}}
-            {{#foreach: scenarioDefinitions}}[Scenario{{#if: $root.useSeparateScenarioNames}}("{{name}}"){{/if}}{{#if $root.mode()=="MsTest"}} TestMethod{{/if}}]
-            public void {{name.split(' ').join('_')}}()
-            {
-                {{#if type=='ScenarioOutline'}}foreach (var exampleSet in ExampleSets)
-                    foreach (var example in exampleSet)
-                    {
-                        {{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}($"{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step($"{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"').split('<').join('{example["').split('>').join('"]}')}}");                
-                        
-                        {{/foreach}}
-                    }{{/if}}
-                {{#ifnot type=='ScenarioOutline'}}{{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
-                {{#if argument}}{
-                    {{#if argument.rows[0].cells.length == 1}}var arguments = ArgumentList{{/if}}{{#ifnot argument.rows[0].cells.length == 1}}var arguments = ArgumentTable{{/ifnot}};
-                }{{/if}}          
-                {{/foreach}}{{/ifnot}}  
-            }
+            {{#foreach: background.steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
                             
-            {{/foreach}}{{#if $root.allScenariosCoveredTest}}{{#if $root.mode()=="MsTest"}}[TestMethod]
-            {{/if}}public void All_scenarios_covered()
-            {
-                {{#if $root.mode()=="MsTest"}}Assert.IsTrue(AllScenariosCovered);{{/if}}
-            }{{/if}}
-        }<!--/ko-->
-    }
+            {{/foreach}}  
+        }
+        {{/if}}
+        {{#foreach: scenarioDefinitions}}[Scenario{{#if: $root.useSeparateScenarioNames}}("{{name}}"){{/if}}{{#if $root.mode()=="MsTest"}} TestMethod{{/if}}]
+        public void {{name.split(' ').join('_')}}()
+        {
+            {{#if type=='ScenarioOutline'}}foreach (var exampleSet in ExampleSets)
+                foreach (var example in exampleSet)
+                {
+                    {{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}($"{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step($"{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"').split('<').join('{example["').split('>').join('"]}')}}");                
+                    
+                    {{/foreach}}
+                }{{/if}}{{#ifnot type=='ScenarioOutline'}}{{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
+            {{#if argument}}{
+                {{#if argument.rows[0].cells.length == 1}}var arguments = ArgumentList{{/if}}{{#ifnot argument.rows[0].cells.length == 1}}var arguments = ArgumentTable{{/ifnot}};
+            }{{/if}}          
+            {{/foreach}}{{/ifnot}}  
+        }
+                        
+        {{/foreach}}{{#if $root.allScenariosCoveredTest}}{{#if $root.mode()=="MsTest"}}[TestMethod]
+        {{/if}}public void All_scenarios_covered()
+        {
+            {{#if $root.mode()=="MsTest"}}Assert.IsTrue(AllScenariosCovered);{{/if}}
+        }{{/if}}
+    }<!--/ko-->
+}
     </pre>
     
     <pre data-bind="text: errorText"></pre>
