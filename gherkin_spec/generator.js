@@ -42,6 +42,42 @@ var that =
   loadExample: function()
   {
     that.inputText(exampleFeature);
+  },  
+  copyToCliboard: function()
+  {
+    var copyPre = document.querySelector('.js-copy-pre');    
+    var copyPreTarget = document.querySelector('.js-copy-pre-target');
+    copyPreTarget.value = copyPre.textContent;
+    
+    copyPreTarget.style.display = "block"
+    
+     copyPreTarget.style.position = 'fixed';
+  copyPreTarget.style.top = 0;
+  copyPreTarget.style.left = 0;
+
+  // Ensure it has a small width and height. Setting to 1px / 1em
+  // doesn't work as this gives a negative w/h on some browsers.
+  copyPreTarget.style.width = '2em';
+  copyPreTarget.style.height = '2em';
+
+  // We don't need padding, reducing the size if it does flash render.
+  copyPreTarget.style.padding = 0;
+
+  // Clean up any borders.
+  copyPreTarget.style.border = 'none';
+  copyPreTarget.style.outline = 'none';
+  copyPreTarget.style.boxShadow = 'none';
+    
+    copyPreTarget.select();  
+  
+    try {
+      if(!document.execCommand('copy'))
+      alert('Oops, unable to copy');
+    } catch (err) {
+      alert('Oops, unable to copy:' + err.message);
+    }
+    
+    copyPreTarget.style.display = "none"
   }
 }
 

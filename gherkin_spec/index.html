@@ -28,10 +28,13 @@
     "All scenarios covered" test(at the end): <input type="checkbox" data-bind="checked: allScenariosCoveredTest"></input>
     <br>
     <input type="button" value="Load Example" data-bind="click: loadExample">
+    <!--ko if: document.queryCommandSupported('copy')-->
+    <input style="float:right" type="button" value="Copy to Clipboard" data-bind="click: copyToCliboard">
     <br>
-    <textarea id=input style="float:left;width:40%;height:500px" rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>    
-        
-    <pre style="width:40%; height:500px; max-height:500px; overflow: auto">
+    <!--/ko-->
+    <textarea id=input style="float:left;width:47%;height:500px" rows=30 data-bind="textInput: inputText">Feature: Hello</textarea>    
+    <textarea class="js-copy-pre-target" style="display:none" ></textarea>
+    <pre class="js-copy-pre" style="width:47%; height:500px; max-height:500px; overflow: auto">
     {{#foreach: usings}}using {{$data}};
     {{/foreach}}
     namespace {{namespaceName}}
