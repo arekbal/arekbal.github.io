@@ -138,6 +138,14 @@ Feature: Serve coffee
     And a blog named 'Expensive Therapy' owned by 'Wilson'
 
   Scenario: Buy last coffee
+    Given a blog post named "Random" with:
+    """
+    Some Title, Eh?
+    ===============
+    Here is the first paragraph of my blog post.
+    Lorem ipsum dolor sit amet, consectetur adipiscing
+    elit.
+    """
     Given there are 1 coffees left in the machine
     And I have deposited 1$
 	Given the following people exist:

@@ -64,7 +64,7 @@ namespace {{namespaceName}}
                     {{/foreach}}
                 }{{/if}}{{#ifnot type=='ScenarioOutline'}}{{#foreach: steps}}{{#if $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}{{keyword.trim()}}("{{/if}}{{#ifnot $root.useKeywords() && $root.knownKeywordsArray().indexOf(keyword.trim()) > -1}}Step("{{keyword}}{{/ifnot}}{{text.split('"').join('\\\"')}}");
             {{#if argument}}{
-                {{#if argument.rows[0].cells.length == 1}}var arguments = ArgumentList{{/if}}{{#ifnot argument.rows[0].cells.length == 1}}var arguments = ArgumentTable{{/ifnot}};
+                {{#if argument.type == 'DocString' }}var argument = ArgumentString{{/if}}{{#if argument.type != 'DocString' && argument.rows[0].cells.length == 1}}var arguments = ArgumentList{{/if}}{{#if argument.type != 'DocString' && argument.rows[0].cells.length != 1}}var arguments = ArgumentTable{{/if}};
             }{{/if}}          
             {{/foreach}}{{/ifnot}}  
         }
