@@ -7,30 +7,70 @@
     <meta name="keywords" content="BDD,C#,Gherkin,Spec,Generator">
     <meta name="author" content="DOIX">
     <meta charset=UTF-8> 
+	<style>
+	table {
+	  background-color:#FEC;
+	  margin-left:auto;
+	  margin-right:auto;
+	  padding:5px;
+	}
+	td {
+	  text-align: right;
+	}
+	td+td {
+	  text-align: left;
+	}
+	pre.errors {
+		font-style:bold;
+		background-color:darkorange;
+		color:white;
+	}
+	</style>
   </head>
 
   <body>
-    Required: GherkinSpec v1.4.0.0 and C# 6 compiler(for interpolated strings in Scenario Outlines)
-    <br>    
-    Namespace: <input id=ns type=text data-bind="textInput: namespaceName"></input>
-    <br>
-    FilePath: <input id=ns type=text data-bind="textInput: filePath"></input> or FileAddress: <input id=ns type=text data-bind="textInput: fileAddress"></input> or Loader: <input id=ns type=text data-bind="textInput: loader"></input> with LoaderParam: <input id=ns type=text data-bind="textInput: loaderParam"></input>
-    <br>
-    Mode:
-    <!--ko foreach: modes-->
-      <label><input type="radio" name="mode" data-bind="attr:{ value: $data }, checked: $parent.mode" />{{$data}}</label>   
-    <!--/ko-->
-    <br>
-    Base Class: <input id=ns type=text data-bind="textInput: baseClass"></input>
-    <br>
-    Use keywords: <input type="checkbox" data-bind="checked: useKeywords" /> 
-    <br>
-    Known keywords: <input type="text" data-bind="textInput: knownKeywords" />
-    <br>
-    Separate scenario names: <input type="checkbox" data-bind="checked: useSeparateScenarioNames"></input>
-    <br>
-    "All scenarios covered" test(at the end): <input type="checkbox" data-bind="checked: allScenariosCoveredTest"></input>
-    <br>
+    Supports: GherkinSpec v1.4.2.0 and assumes C# 6 compiler for interpolated strings in Scenario Outlines. If you don't need those, use simple '+' or String.Format(...), that switch might be added to generator at later time
+	<p>
+	<table>
+		<tr>
+			<td>Namespace: </td>
+			<td><input id=ns type=text data-bind="textInput: namespaceName"></input></td>
+		</tr>
+		<tr>
+			<td>FilePath: </td>
+			<td> <input id=ns type=text data-bind="textInput: filePath"></input> or FileAddress: <input id=ns type=text data-bind="textInput: fileAddress"></input> or Loader: <input id=ns type=text data-bind="textInput: loader"></input> with LoaderParam: <input id=ns type=text data-bind="textInput: loaderParam"></input></td>
+		</tr>
+			<tr>
+			<td>Mode: </td>
+			<td>
+			<!--ko foreach: modes-->
+			  <label><input type="radio" name="mode" data-bind="attr:{ value: $data }, checked: $parent.mode" />{{$data}}</label>   
+			<!--/ko-->
+			</td>
+		</tr>
+			<tr>
+			<td>Base Class: </td>
+			<td><input id=ns type=text data-bind="textInput: baseClass"></input></td>
+		</tr>
+		<tr>
+			<td>Use keywords: </td>
+			<td><input type="checkbox" data-bind="checked: useKeywords" /> </td>
+		</tr>
+		<tr>
+			<td>Known keywords: </td>
+			<td><input type="text" data-bind="textInput: knownKeywords" /></td>
+		</tr>
+		<tr>
+			<td>Separate scenario names: </td>
+			<td><input type="checkbox" data-bind="checked: useSeparateScenarioNames"></input></td>
+		</tr>
+		<tr>
+			<td>"All scenarios covered" test(at the end): </td>
+			<td><input type="checkbox" data-bind="checked: allScenariosCoveredTest"></input></td>
+		</tr>
+	</table> 
+	</p>
+	
     <input type="button" value="Load Example" data-bind="click: loadExample">
     <!--ko if: document.queryCommandSupported('copy')-->
     <input style="float:right" type="button" value="Copy All to Clipboard" data-bind="click: copyToCliboard">
@@ -77,8 +117,9 @@ namespace {{namespaceName}}
     }<!--/ko-->
 }
     </pre>
-    
-    <pre data-bind="text: errorText"></pre>
+	<!--ko if: errorText-->
+		<pre  class=errors data-bind="text: errorText"></pre>
+	<!--/ko-->
            
     <script src="gherkin.min.js"></script>
     <script src="knockout-3.4.0rc.js"></script>
