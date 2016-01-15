@@ -29,7 +29,7 @@
   </head>
 
   <body>
-    Supports: GherkinSpec v1.4.2.0 and assumes C# 6 compiler for interpolated strings in Scenario Outlines. If you don't need those, use simple '+' or String.Format(...), that switch might be added to generator at later time
+    Supports: GherkinSpec v2.0, assumes C# 6 compiler for interpolated strings in Scenario Outlines. If you don't need those, use simple '+' or String.Format(...), that switch might be added to generator at later time
 	<p>
 	<table>
 		<tr>
@@ -109,10 +109,10 @@ namespace {{namespaceName}}
             {{/foreach}}{{/ifnot}}  
         }
                         
-        {{/foreach}}{{#if $root.allScenariosCoveredTest}}{{#if $root.mode()=="MsTest"}}[TestMethod]
-        {{/if}}public void All_scenarios_covered()
+        {{/foreach}}{{#if $root.allScenariosCoveredTest}}{{#if $root.mode()=="MsTest"}}[TestMethod]{{/if}}{{#if $root.mode()=="XUnit"}}[Fact]{{/if}}
+        public void All_scenarios_covered()
         {
-            {{#if $root.mode()=="MsTest"}}Assert.IsTrue(AllScenariosCovered);{{/if}}
+            {{#if $root.mode()=="MsTest"}}Assert.IsTrue(AllScenariosCovered);{{/if}}{{#if $root.mode()=="XUnit"}}Assert.True(AllScenariosCovered);{{/if}}
         }{{/if}}
     }<!--/ko-->
 }

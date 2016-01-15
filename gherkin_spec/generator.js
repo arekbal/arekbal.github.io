@@ -29,7 +29,7 @@ var that =
   namespaceName: ko.observable("NAMESPACE"),
   inputText: ko.observable(""),
   mode: ko.observable("MsTest"),
-  modes: ko.observableArray(["Base", "MsTest"/*, "NUnit", "xUnit"*/]),
+  modes: ko.observableArray(["Base", "MsTest"/*, "NUnit"*/, "XUnit"]),
   errorText: ko.observable(""),
   ast: ko.observable(),
   usings: ko.observableArray(),
@@ -95,14 +95,22 @@ function setMode()
 {
   var usings = 
   [
-    "GherkinSpec.Core",
   ]
  
   if(that.mode() == "MsTest")
-  {
+  {	
     usings.push("GherkinSpec.MsTest")
+	usings.push("GherkinSpec.MsTest.Meta")
     usings.push("Microsoft.VisualStudio.TestTools.UnitTesting")
   }
+  else
+	  if(that.mode() == "XUnit")
+	  {
+		usings.push("GherkinSpec.XUnit")
+		usings.push("GherkinSpec.XUnit.Meta")
+		usings.push("Xunit")
+		usings.push("Xunit.Abstractions")
+	  }
     
   that.usings(usings)
 }
