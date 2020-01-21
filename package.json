@@ -30,7 +30,7 @@
     "knockout.mapping": "^2.4.3",
     "knockout.punches": "^0.5.1",
     "mongodb": "^2.0.27",
-    "mongoose": "^4.0.1",
+    "mongoose": "^5.8.3",
     "one-com-knockout-projections": "^1.6.0",
     "pagerjs": "^1.0.0",
     "promise-ts": "^0.2.2",
